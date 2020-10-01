@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/todo/TodoListProvider.dart';
+import 'package:todo_app/ui/TodoListCompleted.dart';
+import 'package:todo_app/ui/TodoListNew.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,84 +20,84 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       home: ChangeNotifierProvider(
         create: (BuildContext context) => TodoListProvider(),
-        child: Home(),
+        child: MyHome(),
       ),
     );
   }
 }
 
-class Home extends StatelessWidget {
+class MyHome extends StatefulWidget {
+  @override
+  _MyHomeState createState() => _MyHomeState();
+}
+
+class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
+
+  TabController _controller;
+  int _fabIndex;
+
+  @override
+  void initState() {
+    this._fabIndex = 0;
+    this._controller = TabController(length: 2, vsync: this);
+
+    _controller.addListener(() {
+      setState(() {
+        this._fabIndex = _controller.index;
+      });
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomPadding: false,
-      appBar: AppBar(
-        title: Text("Todo"),
-      ),
-      body: Container(
-        padding: EdgeInsets.fromLTRB(20.0, 0.0, 20.0, 0),
-        child: Consumer<TodoListProvider>(
-          builder: (context, todo, child) {
-            return ListView.builder(
-              itemCount: todo.todoList.length,
-              itemBuilder: (context, index) {
-                return Card(
-                  elevation: 2,
-                  child: Container(
-                    padding: EdgeInsets.all(20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            "${index + 1}",
-                            style: TextStyle(fontSize: 20.0),
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            padding: EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  "${todo.todoList[index].title}",
-                                  style: TextStyle(fontSize: 18.0),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                Text(
-                                  "${todo.todoList[index].description}",
-                                  style: TextStyle(fontSize: 14.0),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(
-                          child: IconButton(
-                            icon: Icon(todo.todoList[index].isDone == 1 ? Icons.assignment_turned_in : Icons.assignment_late),
-                            color: todo.todoList[index].isDone == 1 ? Colors.green : Colors.red,
-                            onPressed: () {},
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            );
-          },
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 0,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Todo"),
+          bottom: TabBar(
+            onTap: (index){
+              setState(() {
+                _fabIndex = index;
+              });
+              print(_fabIndex.toString());
+            },
+            controller: _controller,
+            tabs: [
+              Tab(
+                icon: Icon(Icons.assignment_late),
+                text: "New",
+              ),
+              Tab(
+                icon: Icon(Icons.assignment_turned_in),
+                text: "Completed",
+              ),
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () {
-          Provider.of<TodoListProvider>(context).addTodo(
-              "My todo 1", "This my testing todo. As I am trying to add a new");
-        },
+        body: TabBarView(
+          controller: _controller,
+          children: [
+            TodoListNew(),
+            TodoListCompleted(),
+          ],
+        ),
+        floatingActionButton: Visibility (
+          child: FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () {
+              Provider.of<TodoListProvider>(context).addTodo("My todo 1",
+                  "This my testing todo. As I am trying to add a new");
+            },
+          ),
+          visible: this._fabIndex == 0,
+        ),
       ),
     );
   }
 }
+
+
