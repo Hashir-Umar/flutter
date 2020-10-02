@@ -9,86 +9,105 @@ class TodoListNew extends StatelessWidget {
     return Container(
       child: Consumer<TodoListProvider>(
         builder: (context, todo, child) {
-          return todo.todoList.length == 0
-              ? Center(
-                  child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.trending_down),
-                      onPressed: () {},
-                      iconSize: 50.0,
-                      color: Colors.grey,
-                    ),
-                    Text(
-                      "Nothing to do",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16.0,
-                      ),
-                    )
-                  ],
-                ))
-              : ListView.builder(
-                  itemCount: todo.todoList.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      title: Text(
-                        "${todo.todoList[index].title}",
-                      ),
-                      subtitle: Text(
-                        "${todo.todoList[index].title}",
-                      ),
-                      onLongPress: () async {
-                        showDialog<void>(
-                            context: context,
-                            barrierDismissible: false, // user must tap button!
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('Delete ?'),
-                                content: Text(
-                                    'Are you sure you want to remove this todo?'),
-                                actions: <Widget>[
-                                  FlatButton(
-                                    child: Text('Yes'),
-                                    textColor: Colors.green,
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                      Provider.of<TodoListProvider>(mContext)
-                                          .remove(index);
-                                    },
-                                  ),
-                                  FlatButton(
-                                    child: Text('No'),
-                                    textColor: Colors.red,
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                ],
-                              );
-                            });
-                      },
-                      focusColor: Colors.deepPurple,
-                      leading: IconButton(
-                        icon: Icon(
-                          Icons.timer,
-                          color: Colors.green,
-                          size: 30.0,
+          return Stack(
+            children: [
+              todo.todoList.length == 0
+                  ? Center(
+                      child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.trending_down),
+                          onPressed: () {},
+                          iconSize: 50.0,
+                          color: Colors.grey,
                         ),
-                        onPressed: () {},
-                      ),
-                      trailing: Checkbox(
-                        value: todo.todoList[index].isDone == 1,
-                        onChanged: (bool value) {
-                          Provider.of<TodoListProvider>(context)
-                              .complete(index);
-                        },
-                      ),
-                      selected: todo.todoList[index].isDone == 1,
-                    );
-                  },
-                );
+                        Text(
+                          "Nothing to do",
+                          style: TextStyle(
+                            color: Colors.grey,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
+                    ))
+                  : ListView.builder(
+                      itemCount: todo.todoList.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(
+                            "${todo.todoList[index].title}",
+                          ),
+                          subtitle: Text(
+                            "${todo.todoList[index].title}",
+                          ),
+                          onLongPress: () async {
+                            showDialog<void>(
+                                context: context,
+                                barrierDismissible:
+                                    false, // user must tap button!
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Delete ?'),
+                                    content: Text(
+                                        'Are you sure you want to remove this todo?'),
+                                    actions: <Widget>[
+                                      FlatButton(
+                                        child: Text('Yes'),
+                                        textColor: Colors.green,
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Provider.of<TodoListProvider>(
+                                                  mContext)
+                                              .remove(index);
+                                        },
+                                      ),
+                                      FlatButton(
+                                        child: Text('No'),
+                                        textColor: Colors.red,
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                });
+                          },
+                          focusColor: Colors.deepPurple,
+                          leading: IconButton(
+                            icon: Icon(
+                              Icons.timer,
+                              color: Colors.green,
+                              size: 30.0,
+                            ),
+                            onPressed: () {},
+                          ),
+                          trailing: Checkbox(
+                            value: todo.todoList[index].isDone == 1,
+                            onChanged: (bool value) {
+                              Provider.of<TodoListProvider>(context)
+                                  .complete(index);
+                            },
+                          ),
+                          selected: todo.todoList[index].isDone == 1,
+                        );
+                      },
+                    ),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: Container(
+                    padding: EdgeInsets.only(right: 16, bottom: 16),
+                    child: FloatingActionButton(
+                      child: Icon(Icons.add),
+                      onPressed: () {
+                        Provider.of<TodoListProvider>(context).addTodo(
+                            "My todo 1",
+                            "This my testing todo. As I am trying to add a new");
+                      },
+                    ),
+                  )),
+            ],
+          );
         },
       ),
     );

@@ -85,16 +85,6 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
             TodoListCompleted(),
           ],
         ),
-        floatingActionButton: Visibility (
-          child: FloatingActionButton(
-            child: Icon(Icons.add),
-            onPressed: () {
-              Provider.of<TodoListProvider>(context).addTodo("My todo 1",
-                  "This my testing todo. As I am trying to add a new");
-            },
-          ),
-          visible: this._fabIndex == 0,
-        ),
       ),
     );
   }
