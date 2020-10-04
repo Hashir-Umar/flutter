@@ -6,6 +6,7 @@ import 'package:todo_app/ui/TodoListNew.dart';
 import 'package:get/get.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(MyApp());
 }
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: ChangeNotifierProvider(
-        create: (BuildContext context) => TodoListProvider(),
+        create: (_) => TodoListProvider(),
         child: MyHome(),
       ),
     );

@@ -43,11 +43,15 @@ class TodoListNew extends StatelessWidget {
                               TodoModel result = await Get.to(
                                   TodoCreateUpdate(),
                                   arguments: TodoModel(
+                                      todo.todoList[index].id,
                                       todo.todoList[index].title,
                                       todo.todoList[index].description,
                                       todo.todoList[index].isDone));
-                              Provider.of<TodoListProvider>(context)
-                                  .updateTodo(todo.todoList[index].id, result.title, result.description);
+                              Provider.of<TodoListProvider>(context).updateTodo(
+                                  todo.todoList[index].id,
+                                  result.title,
+                                  result.description,
+                                  result.isDone);
                             } on NoSuchMethodError catch (exception) {
                               print("Back button called with no input added");
                             }
@@ -76,7 +80,7 @@ class TodoListNew extends StatelessWidget {
                                           Navigator.of(context).pop();
                                           Provider.of<TodoListProvider>(
                                                   mContext)
-                                              .remove(index);
+                                              .remove(todo.todoList[index].id);
                                         },
                                       ),
                                       FlatButton(

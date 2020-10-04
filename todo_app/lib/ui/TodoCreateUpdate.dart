@@ -11,6 +11,7 @@ class TodoCreateUpdate extends StatefulWidget {
 class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  int _id;
   String _title;
   String _description;
   int _isDone;
@@ -18,12 +19,14 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    _id = null;
     _title = "";
     _description = "";
     _isDone = 0;
 
     if (Get.arguments != null) {
       final TodoModel mArgument = Get.arguments;
+      _id = mArgument.id;
       _title = mArgument.title;
       _description = mArgument.description;
       _isDone = mArgument.isDone;
@@ -112,10 +115,10 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
         ));
   }
 
-  void _submit() {
+  void _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      Get.back(result: TodoModel(_title, _description, 0));
+      Get.back(result: TodoModel(_id, _title, _description, _isDone));
     }
   }
 }
