@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/todo/TodoListProvider.dart';
+import 'package:get/get.dart';
+import 'package:todo_app/todo/TodoModel.dart';
+import 'package:todo_app/ui/TodoCreateUpdate.dart';
 
 class TodoListNew extends StatelessWidget {
   @override
@@ -35,11 +38,25 @@ class TodoListNew extends StatelessWidget {
                       itemCount: todo.todoList.length,
                       itemBuilder: (context, index) {
                         return ListTile(
+                          onTap: () async {
+                            try {
+                              TodoModel result = await Get.to(
+                                  TodoCreateUpdate(),
+                                  arguments: TodoModel(
+                                      todo.todoList[index].title,
+                                      todo.todoList[index].description,
+                                      todo.todoList[index].isDone));
+                              Provider.of<TodoListProvider>(context)
+                                  .updateTodo(todo.todoList[index].id, result.title, result.description);
+                            } on NoSuchMethodError catch (exception) {
+                              print("Back button called with no input added");
+                            }
+                          },
                           title: Text(
                             "${todo.todoList[index].title}",
                           ),
                           subtitle: Text(
-                            "${todo.todoList[index].title}",
+                            "${todo.todoList[index].description}",
                           ),
                           onLongPress: () async {
                             showDialog<void>(
@@ -99,10 +116,14 @@ class TodoListNew extends StatelessWidget {
                     padding: EdgeInsets.only(right: 16, bottom: 16),
                     child: FloatingActionButton(
                       child: Icon(Icons.add),
-                      onPressed: () {
-                        Provider.of<TodoListProvider>(context).addTodo(
-                            "My todo 1",
-                            "This my testing todo. As I am trying to add a new");
+                      onPressed: () async {
+                        try {
+                          TodoModel result = await Get.to(TodoCreateUpdate());
+                          Provider.of<TodoListProvider>(context)
+                              .addTodo(result.title, result.description);
+                        } on NoSuchMethodError catch (exception) {
+                          print("Back button called with no input added");
+                        }
                       },
                     ),
                   )),

@@ -17,6 +17,15 @@ class TodoListProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  updateTodo(String id, String title, String description) {
+    _todoList.removeWhere((element) => element.id == id);
+    _todoList.add(
+        TodoModel(title, description, 0)
+    );
+
+    notifyListeners();
+  }
+
   remove(index) {
     _todoList.removeAt(index);
     print(_todoList.toString());
