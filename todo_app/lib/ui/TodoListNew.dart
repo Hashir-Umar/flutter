@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/todo/TodoListProvider.dart';
+import 'package:todo_app/provider/TodoListProvider.dart';
 import 'package:get/get.dart';
-import 'package:todo_app/todo/TodoModel.dart';
+import 'package:todo_app/model/TodoModel.dart';
 import 'package:todo_app/ui/TodoCreateUpdate.dart';
 
 class TodoListNew extends StatelessWidget {

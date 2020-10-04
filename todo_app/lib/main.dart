@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/todo/TodoListProvider.dart';
+import 'package:todo_app/provider/TodoListProvider.dart';
 import 'package:todo_app/ui/TodoListCompleted.dart';
 import 'package:todo_app/ui/TodoListNew.dart';
 import 'package:get/get.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:todo_app/todo/TodoModel.dart';
+import 'package:todo_app/model/TodoModel.dart';
 
 class TodoListProvider extends ChangeNotifier {
 
