@@ -59,7 +59,7 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                           vertical: MediaQuery.of(context).size.height * 0.022,
                           horizontal: 15.0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
                     ),
                     onFieldSubmitted: (String value) {},
@@ -70,20 +70,22 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                 ),
                 Container(
                   child: TextFormField(
+                    maxLines: null,
                     initialValue: _description,
                     onSaved: (input) => _description = input,
                     validator: (input) =>
                         input.isEmpty ? "Please type description" : null,
-                    keyboardType: TextInputType.text,
+                    keyboardType: TextInputType.multiline,
+                    minLines: 6,
                     style: TextStyle(fontSize: 16, color: Colors.black),
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: "Enter description",
                       contentPadding: new EdgeInsets.symmetric(
-                          vertical: MediaQuery.of(context).size.height * 0.09,
+                          vertical: MediaQuery.of(context).size.height * 0.02,
                           horizontal: 15.0),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(25)),
+                        borderRadius: BorderRadius.all(Radius.circular(5)),
                       ),
                     ),
                     onFieldSubmitted: (String value) {},
@@ -100,7 +102,7 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                         decoration: BoxDecoration(
                             color: Colors.blue,
                             borderRadius:
-                                BorderRadius.all(Radius.circular(25))),
+                                BorderRadius.all(Radius.circular(5))),
                         child: Center(
                           child: Text(
                             "Save",

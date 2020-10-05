@@ -37,13 +37,13 @@ class TodoListCompleted extends StatelessWidget {
                         "${todo.todoListCompleted[index].title}",
                       ),
                       subtitle: Text(
-                        "${todo.todoListCompleted[index].title}",
+                        "${todo.todoListCompleted[index].description}",
                       ),
                       focusColor: Colors.deepPurple,
                       leading: IconButton(
                         icon: Icon(
-                          Icons.check_box,
-                          color: Colors.blueAccent,
+                          Icons.check_circle,
+                          color: Colors.green,
                           size: 30.0,
                         ),
                         onPressed: () {},

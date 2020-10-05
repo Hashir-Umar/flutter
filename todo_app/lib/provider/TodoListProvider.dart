@@ -35,7 +35,7 @@ class TodoListProvider extends ChangeNotifier {
           list.add(TodoModel.fromMap(maps[i]));
         }
 
-        list = _todoList;
+        _todoList = list;
       }
     } on Exception catch (exception) {
       _todoList = [];
@@ -56,7 +56,7 @@ class TodoListProvider extends ChangeNotifier {
           list.add(TodoModel.fromMap(maps[i]));
         }
 
-        list = _todoListCompleted;
+        _todoListCompleted = list;
       }
     } on Exception catch (exception) {
       _todoListCompleted = [];
@@ -81,7 +81,7 @@ class TodoListProvider extends ChangeNotifier {
   }
 
   remove(id) async {
-    var deleteID = await _dbHelper.delete(TODO_TABLE, id);
+    await _dbHelper.delete(TODO_TABLE, id);
     _todoList.removeWhere((element)  => element.id == id);
     notifyListeners();
   }

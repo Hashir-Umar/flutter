@@ -1,7 +1,6 @@
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'package:path/path.dart';
-import 'package:todo_app/model/TodoModel.dart';
 
 class DBHelper {
 
@@ -52,7 +51,6 @@ class DBHelper {
     return item;
   }
 
-
   Future<dynamic> update(String tableName, dynamic item) async {
     var dbClient = await database;
     item.id = await dbClient.update(tableName, item.toMap(), where: 'id = ?', whereArgs: [item.id]);
@@ -63,7 +61,6 @@ class DBHelper {
     var dbClient = await database;
     return await dbClient.delete(tableName, where: 'id = ?', whereArgs: [id]);
   }
-
 
   Future close() async{
     var dbClient = await database;
