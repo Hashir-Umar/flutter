@@ -35,51 +35,35 @@ class DBHelper {
         'CREATE TABLE $TODO_TABLE (id INTEGER PRIMARY KEY, title TEXT, description TEXT, isDone INTEGER)');
   }
 
-  Future<TodoModel> save(TodoModel todo) async {
-    var dbClient = await database;
-    todo.id = await dbClient.insert(TODO_TABLE, todo.toMap());
-    return todo;
-  }
 
-  Future<List<TodoModel>> getTodos() async {
+  Future<List<Map>> fetch(String rawQuery) async {
     var dbClient = await database;
 
     List<Map> maps = await dbClient.transaction((txn) async {
-      return await txn.rawQuery('SELECT * FROM $TODO_TABLE where isDone=0');
-    });
-    List<TodoModel> list = [];
-    for (int i = 0; i < maps.length; i++) {
-      list.add(TodoModel.fromMap(maps[i]));
-    }
-
-    return list;
-  }
-  
-  Future<List<TodoModel>> getTodosCompleted() async {
-    var dbClient = await database;
-
-    List<Map> maps = await dbClient.transaction((txn) async {
-      return await txn.rawQuery('SELECT * FROM $TODO_TABLE where isDone=1');
+      return await txn.rawQuery(rawQuery);
     });
 
-    List<TodoModel> list = [];
-    for (int i = 0; i < maps.length; i++) {
-      list.add(TodoModel.fromMap(maps[i]));
-    }
-
-    return list;
+    return maps;
   }
 
-  Future<int> delete(int id) async {
+  Future<dynamic> insert(String tableName, dynamic item) async {
     var dbClient = await database;
-    return await dbClient.delete(TODO_TABLE, where: 'id = ?', whereArgs: [id]);
+    item.id = await dbClient.insert(tableName, item.toMap());
+    return item;
   }
 
-  Future<TodoModel> update(TodoModel todo) async {
+
+  Future<dynamic> update(String tableName, dynamic item) async {
     var dbClient = await database;
-    todo.id = await dbClient.update(TODO_TABLE, todo.toMap(), where: 'id = ?', whereArgs: [todo.id]);
-    return todo;
+    item.id = await dbClient.update(tableName, item.toMap(), where: 'id = ?', whereArgs: [item.id]);
+    return item;
   }
+
+  Future<int> delete(String tableName, int id) async {
+    var dbClient = await database;
+    return await dbClient.delete(tableName, where: 'id = ?', whereArgs: [id]);
+  }
+
 
   Future close() async{
     var dbClient = await database;
