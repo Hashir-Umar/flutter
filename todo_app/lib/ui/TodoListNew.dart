@@ -5,6 +5,8 @@ import 'package:todo_app/provider/TodoListProvider.dart';
 import 'package:get/get.dart';
 import 'package:todo_app/model/TodoModel.dart';
 import 'package:todo_app/ui/TodoCreateUpdate.dart';
+import 'package:todo_app/util/AlertUtil.dart';
+import 'package:intl/intl.dart';
 
 class TodoListNew extends StatelessWidget {
   @override
@@ -37,99 +39,90 @@ class TodoListNew extends StatelessWidget {
                   : ListView.builder(
                       itemCount: todo.todoList.length,
                       itemBuilder: (context, index) {
-                        return Card(
-                          child: ListTile(
-                            onTap: () async {
-                              try {
-                                TodoModel result = await Get.to(
-                                    TodoCreateUpdate(),
-                                    arguments: TodoModel(
-                                        todo.todoList[index].id,
-                                        todo.todoList[index].title,
-                                        todo.todoList[index].description,
-                                        todo.todoList[index].isDone));
-                                Provider.of<TodoListProvider>(context)
-                                    .updateTodo(
-                                        todo.todoList[index].id,
-                                        result.title,
-                                        result.description,
-                                        result.isDone);
-                              } on NoSuchMethodError catch (exception) {
-                                print("Back button called with no input added");
-                              }
-                            },
-                            title: Text(
-                              "${todo.todoList[index].title}",
-                            ),
-                            subtitle: Text(
-                              "${todo.todoList[index].description}",
-                              maxLines: 2,
-                            ),
-                            onLongPress: () async {},
-                            focusColor: Colors.deepPurple,
-                            leading: IconButton(
-                              icon: Icon(
-                                Icons.timer,
-                                color: Colors.green,
-                                size: 30.0,
-                              ),
-                              onPressed: () {},
-                            ),
-                            trailing: PopupMenuButton(
-                              onSelected: (selectedDropDownItem) => {
-                                if (selectedDropDownItem == "Finished")
-                                  Provider.of<TodoListProvider>(context)
-                                      .complete(index)
-                                else
-                                  {
-                                    showDialog<void>(
-                                        context: context,
-                                        barrierDismissible:
-                                            false, // user must tap button!
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: Text('Delete ?'),
-                                            content: Text(
-                                                'Are you sure you want to remove this todo?'),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                child: Text('Yes'),
-                                                textColor: Colors.green,
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  Provider.of<TodoListProvider>(
-                                                          mContext)
-                                                      .remove(todo
-                                                          .todoList[index].id);
-                                                },
-                                              ),
-                                              FlatButton(
-                                                child: Text('Cancel'),
-                                                textColor: Colors.red,
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                              ),
-                                            ],
-                                          );
-                                        })
-                                  }
-                              },
-                              itemBuilder: (BuildContext context) => [
-                                PopupMenuItem(
-                                  child: Text("Finished"),
-                                  value: "Finished",
+                        return false
+                            ? Container(
+                                padding: EdgeInsets.all(20.0),
+                                child: Text(
+                                  DateFormat.MMMMd().format(DateTime.now()),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black.withOpacity(.5)),
                                 ),
-                                PopupMenuItem(
-                                  child: Text("Delete"),
-                                  value: "Delete",
+                              )
+                            : Card(
+                                elevation: 1,
+                                child: ListTile(
+                                  onTap: ()  {
+                                    Get.to(
+                                        TodoCreateUpdate(),
+                                        transition: Transition.zoom,
+                                        arguments: todo.todoList[index]);
+                                  },
+                                  title: Text(
+                                    todo.todoList[index].title,
+                                  ),
+                                  subtitle: Text(
+                                    todo.todoList[index].description,
+                                    maxLines: 2,
+                                  ),
+                                  leading: IconButton(
+                                    icon: Icon(
+                                      Icons.timer,
+                                      color: Colors.green,
+                                      size: 30.0,
+                                    ),
+                                    onPressed: () {},
+                                  ),
+                                  trailing: PopupMenuButton(
+                                    onSelected: (selectedDropDownItem) => {
+                                      if (selectedDropDownItem == "Finished")
+                                        Provider.of<TodoListProvider>(context)
+                                            .complete(index)
+                                      else
+                                        {
+                                          showDialog<void>(
+                                              context: context,
+                                              barrierDismissible: true,
+                                              // user must tap button!
+                                              builder: (BuildContext context) {
+                                                return AlertUtil
+                                                    .simpleAlertDialog(
+                                                        title: "Delete ?",
+                                                        description:
+                                                            "Are you sure you want to remove this todo?",
+                                                        positiveText: "Yes",
+                                                        onPositiveClick: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                          Provider.of<TodoListProvider>(
+                                                                  mContext)
+                                                              .remove(todo
+                                                                  .todoList[
+                                                                      index]
+                                                                  .id);
+                                                        },
+                                                        negativeText: "No",
+                                                        onNegativeClick: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        });
+                                              })
+                                        }
+                                    },
+                                    itemBuilder: (BuildContext context) => [
+                                      PopupMenuItem(
+                                        child: Text("Finished"),
+                                        value: "Finished",
+                                      ),
+                                      PopupMenuItem(
+                                        child: Text("Delete"),
+                                        value: "Delete",
+                                      ),
+                                    ],
+                                    tooltip: "Actions",
+                                  ),
                                 ),
-                              ],
-                              tooltip: "Actions",
-                            ),
-                            selected: todo.todoList[index].isDone == 1,
-                          ),
-                        );
+                              );
                       },
                     ),
               Align(
@@ -138,14 +131,11 @@ class TodoListNew extends StatelessWidget {
                     padding: EdgeInsets.only(right: 16, bottom: 16),
                     child: FloatingActionButton(
                       child: Icon(Icons.add),
-                      onPressed: () async {
-                        try {
-                          TodoModel result = await Get.to(TodoCreateUpdate());
-                          Provider.of<TodoListProvider>(context)
-                              .addTodo(result.title, result.description);
-                        } on NoSuchMethodError catch (exception) {
-                          print("Back button called with no input added");
-                        }
+                      onPressed: () {
+                        Get.to(
+                          TodoCreateUpdate(),
+                          transition: Transition.leftToRight,
+                        );
                       },
                     ),
                   )),

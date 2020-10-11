@@ -31,7 +31,7 @@ class DBHelper {
 
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(
-        'CREATE TABLE $TODO_TABLE (id INTEGER PRIMARY KEY, title TEXT, description TEXT, isDone INTEGER)');
+        'CREATE TABLE $TODO_TABLE (id INTEGER PRIMARY KEY, title TEXT, description TEXT, date TEXT, time TEXT, isDone INTEGER)');
   }
 
 
