@@ -43,7 +43,7 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
-        title: Text("Todo"),
+        title: Text("My Day"),
         leading: IconButton(
           icon: SvgPicture.asset(
             "assets/icons/menu.svg",

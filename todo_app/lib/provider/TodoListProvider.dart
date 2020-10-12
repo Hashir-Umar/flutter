@@ -10,9 +10,7 @@ class TodoListProvider extends ChangeNotifier {
   List<TodoModel> _todoListCompleted = [];
 
   List<TodoModel> get todoList => this._todoList;
-
   List<TodoModel> get todoListToday => this._todoListToday;
-
   List<TodoModel> get todoListCompleted => this._todoListCompleted;
 
   static const TODO_TABLE = "Todo";
@@ -130,11 +128,14 @@ class TodoListProvider extends ChangeNotifier {
   remove(id) async {
     await _dbHelper.delete(TODO_TABLE, id);
     _todoList.removeWhere((element) => element.id == id);
+    _todoListToday.removeWhere((element) => element.id == id);
+    _todoListCompleted.removeWhere((element) => element.id == id);
     updateTodayList();
     notifyListeners();
   }
 
-  complete(index) async {
+  complete(id) async {
+    int index = _todoList.indexWhere((element) => element.id == id);
     _todoList[index].isDone = 1;
     TodoModel item = _todoList.removeAt(index);
     var todo = await _dbHelper.update(TODO_TABLE, item);
