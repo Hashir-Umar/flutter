@@ -4,6 +4,7 @@ import 'package:todo_app/sql/DBHelper.dart';
 import 'package:todo_app/util/DateTimeUtil.dart';
 
 class TodoListProvider extends ChangeNotifier {
+
   DBHelper _dbHelper;
   List<TodoModel> _todoList = [];
   List<TodoModel> _todoListToday = [];

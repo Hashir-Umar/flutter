@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/ui/TodoListCompleted.dart';
 import 'package:todo_app/ui/TodoListNew.dart';
 
+import '../../main.dart';
 import '../TodoCreateUpdate.dart';
 
 class MainDrawer extends StatefulWidget {
@@ -13,6 +15,7 @@ class MainDrawer extends StatefulWidget {
 }
 
 class _MainDrawerState extends State<MainDrawer> {
+
   final int _listCount = 3;
   bool _darkMode = false;
 
@@ -54,6 +57,7 @@ class _MainDrawerState extends State<MainDrawer> {
         onChanged: (value) {
           setState(() {
             this._darkMode = value;
+            Provider.of<ThemeModel>(context).changeMode(this._darkMode);
           });
         },
       );

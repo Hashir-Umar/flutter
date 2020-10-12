@@ -15,16 +15,28 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => TodoListProvider(),
-      child: GetMaterialApp(
-        title: 'Todo application',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        debugShowCheckedModeBanner: false,
-        home: MyHome(),
-      ),
+      create: (_) => ThemeModel(ThemeMode.light),
+      child: ChangeNotifierProvider(
+          create: (_) => TodoListProvider(),
+          child: Consumer<ThemeModel>(
+            builder: (BuildContext context, value, Widget child) {
+              return GetMaterialApp(
+                title: 'Todo application',
+                theme: ThemeData(
+                  brightness: Brightness.light,
+                  primarySwatch: Colors.blue,
+                  /* light theme settings */
+                ),
+                darkTheme: ThemeData(
+                  brightness: Brightness.dark,
+                  /* dark theme settings */
+                ),
+                themeMode: value.mode,
+                debugShowCheckedModeBanner: false,
+                home: MyHome(),
+              );
+            },
+          )),
     );
   }
 }
@@ -36,6 +48,7 @@ class MyHome extends StatefulWidget {
 
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -63,5 +76,16 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         ],
       ),
     );
+  }
+}
+
+class ThemeModel with ChangeNotifier {
+
+  ThemeMode mode;
+  ThemeModel(this.mode);
+
+  changeMode(variable) {
+    mode = variable ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
   }
 }
