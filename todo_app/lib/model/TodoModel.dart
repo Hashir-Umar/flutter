@@ -1,7 +1,4 @@
-import 'package:uuid/uuid.dart';
-
 class TodoModel {
-
   int _id;
   String _title;
   String _description;
@@ -9,10 +6,11 @@ class TodoModel {
   String _time;
   int _isDone;
 
-  TodoModel(this._id, this._title, this._description, this._date, this._time, this._isDone);
+  TodoModel(this._id, this._title, this._description, this._date, this._time,
+      this._isDone);
 
   Map<String, dynamic> toMap() {
-    var map = <String, dynamic> {
+    var map = <String, dynamic>{
       'id': _id,
       'title': _title,
       'description': _description,

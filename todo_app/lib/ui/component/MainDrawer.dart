@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/shared_pref/SharedPrefHelper.dart';
 import 'package:todo_app/ui/TodoListCompleted.dart';
 import 'package:todo_app/ui/TodoListNew.dart';
 
 import '../../main.dart';
-import '../TodoCreateUpdate.dart';
 
 class MainDrawer extends StatefulWidget {
   @override
@@ -15,9 +15,15 @@ class MainDrawer extends StatefulWidget {
 }
 
 class _MainDrawerState extends State<MainDrawer> {
-
   final int _listCount = 3;
-  bool _darkMode = false;
+  bool _darkMode;
+
+  setTimeMode() async {
+    var mode = await Provider.of<ThemeModel>(context).getThemeMode();
+    setState(() {
+      this._darkMode = mode;
+    });
+  }
 
   @override
   void initState() {
@@ -44,23 +50,24 @@ class _MainDrawerState extends State<MainDrawer> {
 
   Widget getListItem(int index) {
     if (index == 2) {
-      return SwitchListTile(
-        title: Text(
-          _listItemsTitle[index],
-          style: TextStyle(
-            letterSpacing: 1.1,
-            fontSize: 12,
-            fontWeight: FontWeight.w900,
+      return Consumer<ThemeModel>(
+          builder: (BuildContext context, value, Widget child) {
+        return SwitchListTile(
+          title: Text(
+            _listItemsTitle[index],
+            style: TextStyle(
+              letterSpacing: 1.1,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+            ),
           ),
-        ),
-        value: _darkMode,
-        onChanged: (value) {
-          setState(() {
+          value: value.mode == ThemeMode.dark ? true : false,
+          onChanged: (value) {
             this._darkMode = value;
             Provider.of<ThemeModel>(context).changeMode(this._darkMode);
-          });
-        },
-      );
+          },
+        );
+      });
     }
 
     return ListTile(
@@ -108,15 +115,18 @@ class _MainDrawerState extends State<MainDrawer> {
                         child: Stack(
                           children: [
                             Positioned.fill(
-                              bottom: MediaQuery.of(context).size.height * 0.01,
+                              bottom: MediaQuery.of(context).size.height * 0.08,
                               child: Align(
                                 alignment: Alignment.centerLeft,
                                 child: CircleAvatar(
-                                  radius: 70,
+                                  radius:
+                                      MediaQuery.of(context).size.height * 0.09,
                                   backgroundColor: Colors.white,
                                   child: CircleAvatar(
-                                    radius: 68,
-                                    backgroundImage: AssetImage("assets/images/male_image.jpg"),
+                                    radius: MediaQuery.of(context).size.height *
+                                        0.088,
+                                    backgroundImage: AssetImage(
+                                        "assets/images/male_image.jpg"),
                                   ),
                                 ),
                               ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/provider/TodoListProvider.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:todo_app/shared_pref/SharedPrefHelper.dart';
 import 'package:todo_app/ui/TodoListToday.dart';
 import 'package:todo_app/ui/component/MainDrawer.dart';
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => ThemeModel(ThemeMode.light),
+      create: (_) => ThemeModel(),
       child: ChangeNotifierProvider(
           create: (_) => TodoListProvider(),
           child: Consumer<ThemeModel>(
@@ -49,10 +50,10 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,
       appBar: AppBar(
         elevation: 0,
@@ -80,11 +81,29 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
 }
 
 class ThemeModel with ChangeNotifier {
-
   ThemeMode mode;
-  ThemeModel(this.mode);
 
-  changeMode(variable) {
+  ThemeModel() {
+    getTheme();
+  }
+
+  Future<bool> getThemeMode() async {
+    var sf = SharedPrefHelper();
+    bool variable = await sf.getTheme();
+    print("variable: " + variable.toString());
+    return variable;
+  }
+
+  changeMode(variable) async {
+    var sf = SharedPrefHelper();
+    await sf.setTheme(variable);
+    mode = variable ? ThemeMode.dark : ThemeMode.light;
+    notifyListeners();
+  }
+
+  Future<void> getTheme() async {
+    var sf = SharedPrefHelper();
+    bool variable = await sf.getTheme();
     mode = variable ? ThemeMode.dark : ThemeMode.light;
     notifyListeners();
   }

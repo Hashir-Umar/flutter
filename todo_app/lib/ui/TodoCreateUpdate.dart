@@ -58,6 +58,7 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
   Widget build(BuildContext context) {
 
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           title: Text(_pageName),
         ),
@@ -75,7 +76,6 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                     validator: (input) =>
                         input.isEmpty ? "Please type title" : null,
                     keyboardType: TextInputType.text,
-                    style: TextStyle(fontSize: 16, color: Colors.black),
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: "Enter title",
@@ -101,7 +101,6 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                         input.isEmpty ? "Please type description" : null,
                     keyboardType: TextInputType.multiline,
                     minLines: 6,
-                    style: TextStyle(fontSize: 16, color: Colors.black),
                     textInputAction: TextInputAction.next,
                     decoration: InputDecoration(
                       labelText: "Enter description",
@@ -153,9 +152,8 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                           context: context,
                           initialTime: TimeOfDay.now(),
                           builder: (BuildContext context, Widget child) {
-                            return Theme(
-                              data: ThemeData.light(),
-                              child: child,
+                            return Container(
+                                child: child
                             );
                           },
                         );
