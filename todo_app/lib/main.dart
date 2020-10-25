@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/provider/ThemeProvider.dart';
 import 'package:todo_app/provider/TodoListProvider.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:todo_app/provider/UserProvider.dart';
 import 'package:todo_app/shared_pref/SharedPrefHelper.dart';
 import 'package:todo_app/ui/TodoListToday.dart';
 import 'package:todo_app/ui/component/MainDrawer.dart';
+import 'package:todo_app/util/Constant.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,29 +18,31 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeModel(),
-      child: ChangeNotifierProvider(
-          create: (_) => TodoListProvider(),
-          child: Consumer<ThemeModel>(
-            builder: (BuildContext context, value, Widget child) {
-              return GetMaterialApp(
-                title: 'Todo application',
-                theme: ThemeData(
-                  brightness: Brightness.light,
-                  primarySwatch: Colors.blue,
-                  /* light theme settings */
-                ),
-                darkTheme: ThemeData(
-                  brightness: Brightness.dark,
-                  /* dark theme settings */
-                ),
-                themeMode: value.mode,
-                debugShowCheckedModeBanner: false,
-                home: MyHome(),
-              );
-            },
-          )),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => TodoListProvider()),
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (BuildContext context, value, Widget child) {
+          return GetMaterialApp(
+            title: 'Todo application',
+            theme: ThemeData(
+              brightness: Brightness.light,
+              primarySwatch: Colors.blue,
+              /* light theme settings */
+            ),
+            darkTheme: ThemeData(
+              brightness: Brightness.dark,
+              /* dark theme settings */
+            ),
+            themeMode: value.mode,
+            debugShowCheckedModeBanner: false,
+            home: MyHome(),
+          );
+        },
+      ),
     );
   }
 }
@@ -77,34 +82,5 @@ class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
         ],
       ),
     );
-  }
-}
-
-class ThemeModel with ChangeNotifier {
-  ThemeMode mode;
-
-  ThemeModel() {
-    getTheme();
-  }
-
-  Future<bool> getThemeMode() async {
-    var sf = SharedPrefHelper();
-    bool variable = await sf.getTheme();
-    print("variable: " + variable.toString());
-    return variable;
-  }
-
-  changeMode(variable) async {
-    var sf = SharedPrefHelper();
-    await sf.setTheme(variable);
-    mode = variable ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
-  }
-
-  Future<void> getTheme() async {
-    var sf = SharedPrefHelper();
-    bool variable = await sf.getTheme();
-    mode = variable ? ThemeMode.dark : ThemeMode.light;
-    notifyListeners();
   }
 }

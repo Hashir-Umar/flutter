@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/model/UserModel.dart';
+import 'package:todo_app/provider/ThemeProvider.dart';
+import 'package:todo_app/provider/UserProvider.dart';
 import 'package:todo_app/shared_pref/SharedPrefHelper.dart';
 import 'package:todo_app/ui/TodoListCompleted.dart';
 import 'package:todo_app/ui/TodoListNew.dart';
-
+import 'package:image_picker/image_picker.dart';
+import 'package:todo_app/util/Constant.dart';
 import '../../main.dart';
 
 class MainDrawer extends StatefulWidget {
@@ -16,18 +22,11 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   final int _listCount = 3;
-  bool _darkMode;
 
-  setTimeMode() async {
-    var mode = await Provider.of<ThemeModel>(context).getThemeMode();
-    setState(() {
-      this._darkMode = mode;
-    });
-  }
 
   @override
   void initState() {
-    this._darkMode = false;
+    UserProvider();
     super.initState();
   }
 
@@ -50,7 +49,7 @@ class _MainDrawerState extends State<MainDrawer> {
 
   Widget getListItem(int index) {
     if (index == 2) {
-      return Consumer<ThemeModel>(
+      return Consumer<ThemeProvider>(
           builder: (BuildContext context, value, Widget child) {
         return SwitchListTile(
           title: Text(
@@ -63,8 +62,7 @@ class _MainDrawerState extends State<MainDrawer> {
           ),
           value: value.mode == ThemeMode.dark ? true : false,
           onChanged: (value) {
-            this._darkMode = value;
-            Provider.of<ThemeModel>(context).changeMode(this._darkMode);
+            Provider.of<ThemeProvider>(context).changeMode(value);
           },
         );
       });
@@ -104,62 +102,80 @@ class _MainDrawerState extends State<MainDrawer> {
                 children: [
                   Expanded(
                     flex: 2,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 0.7,
-                      child: DrawerHeader(
-                        decoration: BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage(
-                                    "assets/images/drawer_header.jpg"),
-                                fit: BoxFit.fill)),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              bottom: MediaQuery.of(context).size.height * 0.08,
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: CircleAvatar(
-                                  radius:
-                                      MediaQuery.of(context).size.height * 0.09,
-                                  backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: MediaQuery.of(context).size.height *
-                                        0.088,
-                                    backgroundImage: AssetImage(
-                                        "assets/images/male_image.jpg"),
+                    child: Consumer<UserProvider>(
+                      builder: (BuildContext context, value, Widget child) {
+                        return Container(
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          child: DrawerHeader(
+                            decoration: BoxDecoration(
+                                image: DecorationImage(
+                                    image: AssetImage(
+                                        "assets/images/drawer_header.jpg"),
+                                    fit: BoxFit.fill)),
+                            child: Stack(
+                              children: [
+                                Positioned.fill(
+                                  bottom:
+                                      MediaQuery.of(context).size.height * 0.08,
+                                  child: GestureDetector(
+                                    onTap: _getImage,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: CircleAvatar(
+                                        radius:
+                                            MediaQuery.of(context).size.height *
+                                                0.09,
+                                        backgroundColor: Colors.white,
+                                        child: CircleAvatar(
+                                          backgroundColor: Colors.white,
+                                          radius: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.088,
+                                          backgroundImage: value
+                                                      .user.imagePath ==
+                                                  null
+                                              ? AssetImage(
+                                                  "assets/images/no_image.png")
+                                              : FileImage(File(
+                                                  value.user.imagePath,
+                                                )),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.bottomLeft,
-                              child: Padding(
-                                padding: EdgeInsets.only(bottom: 10),
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: "Welcome,\n",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 40,
-                                      ),
-                                      children: [
-                                        TextSpan(
-                                          text: "Hashir Umar",
+                                Align(
+                                  alignment: Alignment.bottomLeft,
+                                  child: Padding(
+                                    padding: EdgeInsets.only(bottom: 10),
+                                    child: RichText(
+                                      text: TextSpan(
+                                          text: "Welcome,\n",
                                           style: TextStyle(
-                                            letterSpacing: 1.1,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
+                                            fontSize: 40,
                                           ),
-                                        )
-                                      ]),
+                                          children: [
+                                            TextSpan(
+                                              text: value.user.fullName,
+                                              style: TextStyle(
+                                                letterSpacing: 1.1,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                            )
+                                          ]),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                   Expanded(
@@ -194,5 +210,18 @@ class _MainDrawerState extends State<MainDrawer> {
         ),
       ),
     );
+  }
+
+  final picker = ImagePicker();
+
+  Future _getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      await Provider.of<UserProvider>(context)
+          .updateUserImage(email, pickedFile.path);
+    } else {
+      print('No image selected.');
+    }
   }
 }

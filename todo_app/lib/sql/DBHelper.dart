@@ -1,11 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'package:path/path.dart';
+import 'package:todo_app/model/UserModel.dart';
 
 class DBHelper {
 
   static const String DB_NAME = "todo.db";
   static const TODO_TABLE = "Todo";
+  static const USER_TABLE = "User";
 
   static Database _db;
 
@@ -32,6 +34,8 @@ class DBHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(
         'CREATE TABLE $TODO_TABLE (id INTEGER PRIMARY KEY, title TEXT, description TEXT, date TEXT, time TEXT, isDone INTEGER)');
+    await db.execute(
+        'CREATE TABLE $USER_TABLE (id INTEGER PRIMARY KEY, firstName TEXT, lastName TEXT, email TEXT, password TEXT, imagePath TEXT)');
   }
 
 
@@ -46,6 +50,7 @@ class DBHelper {
   }
 
   Future<dynamic> insert(String tableName, dynamic item) async {
+    print("db: insert: ${item.toMap()}");
     var dbClient = await database;
     item.id = await dbClient.insert(tableName, item.toMap());
     return item;
