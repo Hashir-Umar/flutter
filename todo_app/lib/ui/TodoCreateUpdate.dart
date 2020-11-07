@@ -128,7 +128,7 @@ class _TodoCreateUpdateState extends State<TodoCreateUpdate> {
                         var picked = await showDatePicker(
                           context: context,
                           initialDate: DateTime.now(),
-                          firstDate: DateTime(currentYear),
+                          firstDate: DateTime.now(),
                           lastDate: DateTime(2025),
                         );
 

@@ -5,10 +5,8 @@ import 'package:todo_app/provider/TodoListProvider.dart';
 import 'package:get/get.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:todo_app/provider/UserProvider.dart';
-import 'package:todo_app/shared_pref/SharedPrefHelper.dart';
 import 'package:todo_app/ui/TodoListToday.dart';
 import 'package:todo_app/ui/component/MainDrawer.dart';
-import 'package:todo_app/util/Constant.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -55,8 +53,11 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+
   @override
   Widget build(BuildContext context) {
+
+
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       key: _scaffoldKey,

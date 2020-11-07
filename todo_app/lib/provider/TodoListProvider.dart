@@ -35,7 +35,7 @@ class TodoListProvider extends ChangeNotifier {
     try {
       if (_dbHelper != null) {
         List<Map> maps = await _dbHelper
-            .fetch('SELECT * FROM $TODO_TABLE where date="$currentDate"');
+            .fetch('SELECT * FROM $TODO_TABLE where date="$currentDate" and isDone=0');
 
         print(maps);
 
